@@ -1,0 +1,15 @@
+import boto3
+
+AWS_REGION = "eu-west-3"
+EC2_RESOURCE = boto3.resource('ec2', region_name=AWS_REGION)
+INSTANCE_ID = 'i-0552d625f5501d741'
+
+instance = EC2_RESOURCE.Instance("i-0552d625f5501d741")
+
+instance.start()
+
+print('Starting EC2 instance: {"i-0552d625f5501d741"}')
+
+instance.wait_until_running()
+
+print('EC2 instance "{"i-0552d625f5501d741"}" has been started')

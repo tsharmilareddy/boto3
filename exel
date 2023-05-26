@@ -1,0 +1,30 @@
+import boto3
+import csv
+
+session = boto3.Session(profile_name='default', region_name='us-east-2')
+
+ec2 = session.client('ec2')
+
+result = []
+response = ec2.describe_instances(
+    InstanceIds=[
+        'i-0b6304b785126ca9f'
+    ]).get('Reservations')
+
+for item in response:
+    for each in item['Instances']:
+        result.append({
+            'ImageId': each['ami-05fa00d4c63e32376'],
+            'InstanceType': each['t2.micro'],
+            'PublicIp': each['184.73.59.34'],
+            'PrivateIp': each['172.31.81.207']
+        })
+#The result type will be list of dictionary.
+# print(result) [{'ImageId': 'ami-08c5e20f0xxxxxxxx', 'InstanceType': 't2.micro', 'PublicIp': '10.200.101.11', 'PrivateIp': '172.31.33.95'}]
+
+# Write to csv file.
+header = ['ImageId', 'InstanceType', 'PublicIp', 'PrivateIp']
+with open('ec2-details.csv', 'w') as file:
+    writer = csv.DictWriter(file, fieldnames=header)
+    writer.writeheader()
+    writer.writerows(result)
